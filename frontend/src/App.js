@@ -35,7 +35,7 @@ class App extends Component {
     .then(results => {
       this.setState( {
         imageUrl: newImage.url,
-        resultData: results.data.captions.text
+        resultData: results.data.description.captions[0].text
       })
     })
   }
