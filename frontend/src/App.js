@@ -18,8 +18,25 @@ class App extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    this.setState( {
-      imageUrl: event.target.imageUrl.value
+    const baseUrl = 'https://westcentralus.api.cognitive.microsoft.com/vision/v1.0/analyze?visualFeatures=Categories,Description,Color&details&language=en'
+    const newImage = {
+      url: event.target.imageUrl.value
+    }
+
+    axios.post(baseUrl, 
+        newImage, 
+        {
+        headers: 
+        { 
+          'Content-Type': 'application/json', 
+          'Ocp-Apim-Subscription-Key': config.apikey  
+        }
+    })
+    .then(results => {
+      this.setState( {
+        imageUrl: newImage.url,
+        resultData: results.data.captions.text
+      })
     })
   }
 
