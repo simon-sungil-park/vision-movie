@@ -14,13 +14,15 @@ class App extends Component {
     }
 
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.testMH = this.testMH.bind(this);
   }
 
   handleSubmit(event) {
     event.preventDefault();
     const baseUrl = 'https://westcentralus.api.cognitive.microsoft.com/vision/v1.0/analyze?visualFeatures=Categories,Description,Color&details&language=en'
+    const imageUrl = event.target.imageUrl.value;
     const newImage = {
-      url: event.target.imageUrl.value
+      url: imageUrl
     }
 
     axios.post(baseUrl, 
@@ -34,16 +36,37 @@ class App extends Component {
     })
     .then(results => {
       this.setState( {
-        imageUrl: newImage.url,
-        resultData: results.data.description.captions[0].text
+        imageUrl: imageUrl,
+        resultData: results.data.description.tags.join('  ')
       })
     })
   }
 
+  testMH() {
+    const baseUrl="https://api.mediahound.com/1.3/search/all/star";
+
+
+
+
+    axios.get(baseUrl, {
+      params: {
+        access_token: "4bdb0a8b-0bcc-4fd3-8c72-a07aedffaed8",
+      },
+    })
+    .then(result=>{
+      console.log(result.data);
+    })
+    .catch(err=>{
+      console.log(err);
+    })
+
+  }
 
   render() {
     return (
       <div className="App">
+
+        <button onClick={this.testMH}>MH</button>
 
         <form onSubmit={this.handleSubmit}>
           <input type="text" name="imageUrl" />
