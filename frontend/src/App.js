@@ -4,6 +4,7 @@ import config from  './config.json'
 import axios from 'axios'
 import SearchForm from './SearchForm'
 import MovieList from './MovieList'
+import ImageList from './ImageList'
 
 class App extends Component {
 
@@ -11,7 +12,7 @@ class App extends Component {
     super();
 
     this.state = {
-      imageUrl: '',
+      imageUrls: [],
       actorName: '',
       actorId: '',
       movieList: []      
@@ -29,7 +30,7 @@ class App extends Component {
     }
 
     this.setState({
-      imageUrl: imageUrl
+      imageUrls: [...this.state.imageUrls, imageUrl]
     });
 
     axios.post(baseUrl, 
@@ -92,16 +93,20 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
+      <div className="container">
+
         <SearchForm handleSubmit={ this.handleSubmit }/>
+        <div className="col-sm-8 offset-sm-2">
+          <ImageList imageUrls = { this.state.imageUrls }/>
+        </div>
         { console.log(this.state) }
         
-        <div>
+        {/* <div>
           {
             this.state.imageUrl ? <img src={this.state.imageUrl} alt="image"/> : '' 
           }
           
-        </div>
+        </div> */}
 
         <div>
           <p>{this.state.actorName}</p>

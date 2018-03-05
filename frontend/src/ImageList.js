@@ -1,12 +1,21 @@
 import React, { Component } from 'react';
+import Carousel from 'nuka-carousel';
 
 class ImageList extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {  }
-  }
+ 
   render() { 
-    return ( <div></div> )
+
+    const imageUrlsJSX = this.props.imageUrls.map((url)=>(
+      <img src={ url } className="img-fluid"/>
+    ))
+
+    return ( 
+      <div>
+        <Carousel>
+          { imageUrlsJSX }
+        </Carousel>      
+      </div> 
+    )
   }
 }
  
