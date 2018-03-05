@@ -8,6 +8,10 @@ class SearchForm extends Component {
   render() { 
     return (
       <div>
+        <form onSubmit={this.props.handleSubmit}>
+          <input type="text" name="imageUrl" />
+          <input type="submit" />  
+        </form>
       </div>
     )
   }

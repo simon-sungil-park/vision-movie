@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import './App.css';
 import config from  './config.json'
 import axios from 'axios'
-
-
+import SearchForm from './SearchForm'
+import MovieList from './MovieList'
 
 class App extends Component {
 
@@ -12,11 +12,10 @@ class App extends Component {
 
     this.state = {
       imageUrl: '',
-      resultData: ''
+      actorName: ''
     }
 
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.testMH = this.testMH.bind(this);
   }
 
   handleSubmit(event) {
@@ -39,51 +38,24 @@ class App extends Component {
     .then(results => {
       this.setState( {
         imageUrl: imageUrl,
-        resultData: results.data.description.tags.join('  ')
+        actorName: results.data.categories[0].detail.celebrities[0].name
       })
     })
-  }
-
-  testMH() {
-    const baseUrl="https://api.mediahound.com/1.3/search/all/star";
-
-
-
-
-    axios.get(baseUrl, {
-      params: {
-        access_token: "4bdb0a8b-0bcc-4fd3-8c72-a07aedffaed8",
-      },
-    })
-    .then(result=>{
-      console.log(result.data);
-    })
-    .catch(err=>{
-      console.log(err);
-    })
-
   }
 
   render() {
     return (
       <div className="App">
-
-        <button onClick={this.testMH}>MH</button>
-
-        <form onSubmit={this.handleSubmit}>
-          <input type="text" name="imageUrl" />
-          <input type="submit" />  
-        </form>
-
+        <SearchForm handleSubmit={ this.handleSubmit }/>
+        { console.log(this.state) }
         <div>
           <img src={this.state.imageUrl} alt="image"/>
         </div>
 
         <div>
-          <p>{this.state.resultData}</p>
+          <p>{this.state.actorName}</p>
         </div>
-
-
+        <MovieList actorName={ this.state.actorName }/>
 
       </div>
     );
