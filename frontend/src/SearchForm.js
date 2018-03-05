@@ -9,7 +9,7 @@ class SearchForm extends Component {
     return (
       <div>
         <form onSubmit={this.props.handleSubmit}>
-          <input type="text" name="imageUrl" />
+          <input type="text" name="imageUrl" value="http://www.wnetwork.com/sites/www.wnetwork.com/files/styles/w-article-desktop/public/post/7929/julia_1.jpg"/>
           <input type="submit" />  
         </form>
       </div>

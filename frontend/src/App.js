@@ -12,7 +12,9 @@ class App extends Component {
 
     this.state = {
       imageUrl: '',
-      actorName: ''
+      actorName: '',
+      actorId: '',
+      movieList: []      
     }
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -26,30 +28,79 @@ class App extends Component {
       url: imageUrl
     }
 
+    this.setState({
+      imageUrl: imageUrl
+    });
+
     axios.post(baseUrl, 
         newImage, 
         {
-        headers: 
-        { 
-          'Content-Type': 'application/json', 
-          'Ocp-Apim-Subscription-Key': config.apikey  
+          headers: 
+          { 
+            'Content-Type': 'application/json', 
+            'Ocp-Apim-Subscription-Key': config.apikey  
+          }
         }
+     )
+    .then(results => {
+
+      const actorName = results.data.categories[0].detail.celebrities[0].name;
+      const baseUrlForPersonId = 'https://api.themoviedb.org/3/search/person';
+      const paramsForPersonId = 
+        {
+          api_key: config.tmdbkey,
+          language: 'en-US',
+          page: '1',
+          query: actorName
+        };
+      
+      this.setState({
+        actorName: actorName
+      });        
+
+      return axios.get(baseUrlForPersonId, { params: paramsForPersonId })
+    } )
+    .then( results => {
+      console.log('person id', results);
+
+      const actorId = results.data.results[0].id;
+      const baseUrlForMovies = 'https://api.themoviedb.org/3/person/' + actorId + '/movie_credits';
+      const paramsForMovies = 
+        {
+          api_key: config.tmdbkey,
+          language: 'en-US',
+        };
+
+      this.setState({
+        actorId: actorId
+      });        
+  
+      return axios.get(baseUrlForMovies, { params: paramsForMovies} );
     })
     .then(results => {
-      this.setState( {
-        imageUrl: imageUrl,
-        actorName: results.data.categories[0].detail.celebrities[0].name
-      })
+      console.log('movie list', results);
+
+      this.setState({
+        movieList: Array.from(results.data.cast)
+      });        
+    })
+    .catch(err => {
+      console.log(err);
     })
   }
+
 
   render() {
     return (
       <div className="App">
         <SearchForm handleSubmit={ this.handleSubmit }/>
         { console.log(this.state) }
+        
         <div>
-          <img src={this.state.imageUrl} alt="image"/>
+          {
+            this.state.imageUrl ? <img src={this.state.imageUrl} alt="image"/> : '' 
+          }
+          
         </div>
 
         <div>
