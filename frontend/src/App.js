@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import './App.css';
-import config from './config.json'
+import config from  './config.json'
 import axios from 'axios'
+
+
 
 class App extends Component {
 
