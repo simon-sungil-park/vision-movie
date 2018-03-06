@@ -79,11 +79,13 @@ class App extends Component {
       return axios.get(baseUrlForMovies, { params: paramsForMovies} );
     })
     .then(results => {
-      console.log('movie list', results);
-
+      //console.log('movie list', results);
+      console.log(Array.from(results.data.cast));
       this.setState({
         movieList: Array.from(results.data.cast)
-      });        
+      });       
+
+
     })
     .catch(err => {
       console.log(err);
@@ -99,7 +101,6 @@ class App extends Component {
         <div className="col-sm-8 offset-sm-2">
           <ImageList imageUrls = { this.state.imageUrls }/>
         </div>
-        { console.log(this.state) }
         
         {/* <div>
           {
@@ -111,7 +112,7 @@ class App extends Component {
         <div>
           <p>{this.state.actorName}</p>
         </div>
-        <MovieList actorName={ this.state.actorName }/>
+        <MovieList actorName={this.state.actorName} movieList={this.state.movieList}/>
 
       </div>
     );
