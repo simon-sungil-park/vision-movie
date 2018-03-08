@@ -12,7 +12,7 @@ class SearchForm extends Component {
       <div>
         <form onSubmit={this.props.handleSubmit}>
           <TextField  placeholder="Enter Url" type="text" name="imageUrl" />
-          <Button type="submit">Submit</Button> 
+          <Button type="submit">Search</Button> 
         </form>
       </div>
     )
