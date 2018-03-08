@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import './App.css';
-import config from  './config.json'
-import axios from 'axios'
-import SearchForm from './SearchForm'
-import MovieList from './MovieList'
-import ImageList from './ImageList'
+import config from  './config.json';
+import axios from 'axios';
+import SearchForm from './SearchForm';
+import MovieList from './MovieList';
+import ImageList from './ImageList';
+import Grid  from 'material-ui/Grid';
+import { withStyles } from 'material-ui/styles';
+import Typography from 'material-ui/Typography';
 
 class App extends Component {
 
@@ -95,13 +98,15 @@ class App extends Component {
 
   render() {
     return (
-      <div className="container">
-
-        <SearchForm handleSubmit={ this.handleSubmit }/>
-        <div className="col-sm-8 offset-sm-2">
+      <Grid container justify="center" alignItems="flex-end" alignContent="flex-end">
+        <Grid item xs={12}>
+          <Typography align="center" variant="headline" color="primary">
+            <SearchForm handleSubmit={ this.handleSubmit }/>
+          </Typography>
+        </Grid>
+        <Grid item xs={7}>
           <ImageList imageUrls = { this.state.imageUrls }/>
-        </div>
-        
+        </Grid>
         {/* <div>
           {
             this.state.imageUrl ? <img src={this.state.imageUrl} alt="image"/> : '' 
@@ -112,9 +117,10 @@ class App extends Component {
         <div>
           <p>{this.state.actorName}</p>
         </div>
-        <MovieList actorName={this.state.actorName} movieList={this.state.movieList}/>
-
-      </div>
+          <Grid>
+            <MovieList actorName={this.state.actorName} movieList={this.state.movieList}/>
+          </Grid>
+      </Grid>
     );
   }
 }

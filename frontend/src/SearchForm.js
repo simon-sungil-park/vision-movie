@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Button from 'material-ui/Button';
+import TextField from 'material-ui/TextField';
 
 class SearchForm extends Component {
   constructor(props) {
@@ -9,8 +11,8 @@ class SearchForm extends Component {
     return (
       <div>
         <form onSubmit={this.props.handleSubmit}>
-          <input type="text" name="imageUrl" />
-          <input type="submit" />  
+          <TextField  placeholder="Enter Url" type="text" name="imageUrl" />
+          <Button type="submit">Submit</Button> 
         </form>
       </div>
     )
