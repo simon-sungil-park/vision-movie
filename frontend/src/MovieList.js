@@ -1,33 +1,42 @@
 import React, { Component } from 'react';
-import Paper from 'material-ui/Paper';
-import Grid  from 'material-ui/Grid';
-import Typography from 'material-ui/Typography';
+import './MovieList.css'
 
 class MovieList extends Component {
   render() { 
 
-    const movieListJSX = this.props.movieList.map( movie => (
-
-      <Paper>
-        <Grid container wrap="nowrap">
-          <Grid item xs={4}>
-              <img  
-              src={"httpS://image.tmdb.org/t/p/w185/" + movie.poster_path} 
-              alt="Card image cap" />
-          </Grid>
-          <Grid item xs={8} >
-            <div  >
-              <h5 >Card title</h5>
-              <Typography >Some quick example text to build on the card title and make up the bulk of the card's content.</Typography>
-            </div>
-          </Grid>
-        </Grid>
-      </Paper>
+    const movieListJSX = this.props.movieList.map( movie => !movie.poster_path ?
+      '':
+      (
+        <div className="vm-card" >
+          <div className="vm-poster" >
+              <img src={"https://image.tmdb.org/t/p/w185/" + movie.poster_path} 
+                alt={movie.original_title + " poster"} />
+          </div>
+          <div className="vm-content" >
+            <h3>
+              {movie.original_title} 
+              <span>
+                {movie.release_date ? movie.release_date.substring(0,4) : ''}
+              </span>
+            </h3>
+            <h4>{"as " + movie.character}</h4>
+            <p>{movie.overview}</p>
+          </div>
+        </div>
     ))
 
     return (
-      <div>
-        {movieListJSX}
+      <div className="vm-container" > 
+        <h2>{this.props.actorName}</h2>
+        <h2>{this.props.errorMessage}</h2>
+        {
+          movieListJSX.length > 0 ? 
+            movieListJSX : 
+            this.props.actorName ? 
+              (<h3 style={{textAlign:'center'}}>No movies found.</h3>) :
+              ''
+        }
+        
       </div>
     )
   }

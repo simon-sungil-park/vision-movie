@@ -6,11 +6,9 @@ import SearchForm from './SearchForm';
 import MovieList from './MovieList';
 import ImageList from './ImageList';
 import Grid  from 'material-ui/Grid';
-import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
-import { LinearProgress } from 'material-ui/Progress';
 import { CircularProgress } from 'material-ui/Progress';
 
 class App extends Component {
@@ -23,9 +21,10 @@ class App extends Component {
         'http://www.wnetwork.com/sites/www.wnetwork.com/files/styles/w-article-desktop/public/post/7929/julia_1.jpg',
         'https://www.ecartelera.com/images/sets/26400/26484.jpg',
         'http://www.miami.com/wp-content/uploads/sites/2/2017/12/leonardo_dicaprio.jpg',
+        'https://www.telegraph.co.uk/content/dam/technology/2017/06/06/TELEMMGLPICT000131019253_trans_NvBQzQNjv4BqF4WwDpbO-CkdHTTCi9TWzkYMapKPjdhyLnv9ax6_too.jpeg?imwidth=450'
       ],
       actorName: '',
-      actorId: '',
+      errorMessage: '',
       movieList: [],
       showProgress: false     
     }
@@ -39,7 +38,10 @@ class App extends Component {
     const baseUrl = 'https://westcentralus.api.cognitive.microsoft.com/vision/v1.0/analyze?visualFeatures=Categories,Description,Color&details&language=en'
 
     this.setState( { 
-      showProgress: true
+      showProgress: true,
+      errorMessage: '',
+      actorName: '',
+      movieList: []
     })
     
     axios.post(baseUrl, 
@@ -54,7 +56,20 @@ class App extends Component {
      )
     .then(results => {
 
-      const actorName = results.data.categories[0].detail.celebrities[0].name;
+      let actorName;
+
+      try {
+        actorName = results.data.categories[0].detail.celebrities[0].name;
+      }
+      catch(err) {
+        throw new Error('no-idea');
+      }
+
+      this.setState({
+        actorName: actorName
+      });        
+
+
       const baseUrlForPersonId = 'https://api.themoviedb.org/3/search/person';
       const paramsForPersonId = 
         {
@@ -63,17 +78,20 @@ class App extends Component {
           page: '1',
           query: actorName
         };
-      
-      this.setState({
-        actorName: actorName
-      });        
 
       return axios.get(baseUrlForPersonId, { params: paramsForPersonId })
     } )
     .then( results => {
-      console.log('person id', results);
 
-      const actorId = results.data.results[0].id;
+      let actorId;
+
+      try {
+        actorId = results.data.results[0].id;
+      }
+      catch(err) {
+        throw new Error('no-actor');
+      }
+
       const baseUrlForMovies = 'https://api.themoviedb.org/3/person/' + actorId + '/movie_credits';
       const paramsForMovies = 
         {
@@ -81,22 +99,43 @@ class App extends Component {
           language: 'en-US',
         };
 
-      this.setState({
-        actorId: actorId
-      });        
-  
       return axios.get(baseUrlForMovies, { params: paramsForMovies} );
     })
     .then(results => {
-      //console.log('movie list', results);
-      console.log(Array.from(results.data.cast));
       this.setState({
         movieList: Array.from(results.data.cast)
       });       
     })
     .catch(err => {
-      console.log(err);
-    })
+
+      if (err.message === 'no-idea') {
+        this.setState({
+          actorName: '',
+          errorMessage: 'Sorry, I have no idea...', 
+          movieList: []
+        });        
+      }
+      else if (err.message === 'no-actor') {
+        this.setState({
+          errorMessage: '', 
+          movieList: []
+        });        
+      }
+      else if (err.response && err.response.data && err.response.data.message) {
+        this.setState({
+          actorName: '',
+          errorMessage: 'Sorry, ' + err.response.data.message, 
+          movieList: []
+        });        
+      }
+      else {
+        this.setState({
+          actorName:'',
+          errorMessage: 'Sorry, something worg...', 
+          movieList: []
+        });        
+      }
+  })
     .finally(()=>{
       this.setState( { 
         showProgress: false
@@ -118,59 +157,56 @@ class App extends Component {
 
   render() {
     return (
-      <div>
+      <div className="vm-main" >
+        <AppBar position="static">
+          <Toolbar>
+            <Typography variant="title" color="inherit">
+              Vision Movie
+            </Typography>
+          </Toolbar>
+        </AppBar>
 
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="title" color="inherit">
-            Vision Movie
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <div style={{height:30}}></div>
-      <Grid container justify="center" alignItems="flex-end" alignContent="flex-end">
-        <Grid item xs={12}>
-          <Typography align="center" variant="headline" color="primary">
-            <SearchForm handleSubmit={ this.handleSubmit }/>
-          </Typography>
+        <div className="vm-spacer"></div>
+
+        <Grid container justify="center" alignItems="flex-end" alignContent="flex-end">
+          <Grid item xs={12}>
+            <Typography align="center" variant="headline" color="primary">
+              <SearchForm handleSubmit={ this.handleSubmit }/>
+            </Typography>
+          </Grid>
+
+          <Grid item xs={2}></Grid>
+          <Grid item xs={8}>
+            <ImageList imageUrls={this.state.imageUrls} 
+                       fetchResult={this.fetchResult}/>
+          </Grid>
+          <Grid item xs={2}></Grid>
         </Grid>
 
-        <Grid item xs={2}></Grid>
-        <Grid item xs={8}>
-          <ImageList imageUrls={this.state.imageUrls} fetchResult={this.fetchResult}/>
-        </Grid>
-        <Grid item xs={2}></Grid>
+        <div className="vm-spacer"></div>
 
         {
           this.state.showProgress ? 
             (
-              <div>
-                <Grid item xs={2}></Grid>
-                <Grid item xs={8}>
-                  <CircularProgress />
-                </Grid>
-                <Grid item xs={2}></Grid>
+              <div className="vm-spinner" >
+                <CircularProgress />
               </div>
             ) : 
             (
-              <div>
-                <Grid item xs={12}>
-                  <Typography align="center" variant="headline" color="primary">
-                    {this.state.actorName}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12}>
-                  <MovieList actorName={this.state.actorName} movieList={this.state.movieList}/>
-                </Grid>
-              </div>
+              <MovieList actorName={this.state.actorName} 
+                         movieList={this.state.movieList}
+                         errorMessage={this.state.errorMessage}/>
             )
         }
+        <div className="vm-spacer"></div>
+        <div className="vm-spacer"></div>
+        <div className="vm-spacer"></div>
+        <div className="vm-spacer"></div>
+        <div className="vm-spacer"></div>
 
-      </Grid>
       </div>
-
     );
+
   }
 }
 

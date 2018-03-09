@@ -1,0 +1,47 @@
+.vm-container {
+  width: 66.666667%;
+  margin: 0 auto;
+}
+
+.vm-container h2 {
+  text-align: center;
+}
+
+.vm-card {
+  background-color: #ffffff;
+  box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+  margin: 1.5em 0;
+  display: flex;
+}
+
+
+.vm-poster {
+  height: 100%;
+  flex-basis: 20%;
+}
+
+.vm-poster img {
+  display: block;
+}
+
+.vm-content {
+  padding: 1.0em 2.0em;
+  flex-basis: 80%;
+}
+
+.vm-content h3 {
+  margin: 0;
+  font-size: 1.5em;
+}
+
+.vm-content h4 {
+  margin: 0.5em 0;
+  font-size: 1.2em;
+  color: #555555;
+}
+
+.vm-content h3 span {
+  color: #888888;
+  font-size: 0.8em;
+  margin-left: 2em;
+}
