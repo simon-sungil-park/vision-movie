@@ -2,6 +2,11 @@ import React, { Component } from 'react';
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
 
+const styles = {
+  textBox: {
+    width: 500,
+  }
+}
 class SearchForm extends Component {
   constructor(props) {
     super(props);
@@ -11,7 +16,7 @@ class SearchForm extends Component {
     return (
       <div>
         <form onSubmit={this.props.handleSubmit}>
-          <TextField  placeholder="Enter Url" type="text" name="imageUrl" />
+          <TextField style={styles.textBox} placeholder="Enter Url" type="text" name="imageUrl" />
           <Button type="submit">Search</Button> 
         </form>
       </div>
